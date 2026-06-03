@@ -5,8 +5,12 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "start": "next start",
-    "lint": "eslint",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "lint:check": "eslint .",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
@@ -37,6 +41,34 @@
     "prettier": "^3.4.2",
     "tailwindcss": "^4",
     "typescript": "^6",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "ts-jest": "^29.2.5"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "jsx",
+      "json",
+      "ts",
+      "tsx"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.(test|spec)\\.tsx?$",
+    "transform": {
+      "^.+\\.(t|j)sx?$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-dom"
+    ],
+    "collectCoverageFrom": [
+      "**/*.{ts,tsx}",
+      "!**/*.d.ts",
+      "!**/*.{test,spec}.{ts,tsx}"
+    ],
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "jsdom"
   }
 }
