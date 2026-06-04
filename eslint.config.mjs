@@ -29,7 +29,11 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ['src/{components,hooks,lib}/**/*.{ts,tsx}'],
+    files: [
+      'src/core/**/*.{ts,tsx}',
+      'src/features/**/domain/**/*.{ts,tsx}',
+      'src/features/**/presentation/hooks/**/*.{ts,tsx}',
+    ],
     plugins: {
       jsdoc,
     },
@@ -37,11 +41,14 @@ const eslintConfig = defineConfig([
       'jsdoc/require-jsdoc': [
         'warn',
         {
+          contexts: ['TSInterfaceDeclaration', 'TSMethodSignature'],
           publicOnly: true,
+          checkConstructors: false,
           require: {
             ArrowFunctionExpression: true,
             ClassDeclaration: true,
             FunctionDeclaration: true,
+            MethodDefinition: true,
           },
         },
       ],
