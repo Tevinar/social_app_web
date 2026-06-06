@@ -1,3 +1,5 @@
+import 'server-only';
+
 import { AuthFailureMessages } from '@/core/errors/failure_messages';
 import { ValidationFailure } from '@/core/errors/failures';
 

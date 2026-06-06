@@ -5,6 +5,7 @@ import {
   UnauthorizedException,
   UnexpectedException,
 } from './exceptions';
+import { JsonReader } from '@/core/serialization/json_reader';
 
 /**
  * Runs one remote data source operation behind a consistent exception
@@ -72,18 +73,25 @@ export async function parseServerExceptionFromResponse(
  * Parses a backend error payload into a fully populated `ServerException`.
  */
 export function parseServerExceptionPayload(data: unknown): ServerException {
-  const json = asJsonObject(data);
-  if (!json) {
-    throw new InvalidResponseException({
-      message: 'Backend error response is not a valid JSON object',
-    });
-  }
+  const json = JsonReader.asObject(data, 'response', 'Backend error response');
 
-  const message = requireString(json, 'message');
-  const code = requireString(json, 'code');
-  const statusCode = requireInt(json, 'statusCode');
-  const path = requireString(json, 'path');
-  const timestamp = requireTimestamp(json, 'timestamp');
+  const message = JsonReader.readString(
+    json,
+    'message',
+    'Backend error response',
+  );
+  const code = JsonReader.readString(json, 'code', 'Backend error response');
+  const statusCode = JsonReader.readInt(
+    json,
+    'statusCode',
+    'Backend error response',
+  );
+  const path = JsonReader.readString(json, 'path', 'Backend error response');
+  const timestamp = JsonReader.readDateTime(
+    json,
+    'timestamp',
+    'Backend error response',
+  );
 
   return new ServerException({
     message,
@@ -100,52 +108,4 @@ function isNetworkError(error: unknown): error is Error {
   }
 
   return error instanceof TypeError;
-}
-
-function asJsonObject(data: unknown): Record<string, unknown> | null {
-  if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-    return null;
-  }
-
-  return data as Record<string, unknown>;
-}
-
-function requireString(json: Record<string, unknown>, field: string): string {
-  const value = json[field];
-  if (typeof value === 'string' && value.length > 0) {
-    return value;
-  }
-
-  throw new InvalidResponseException({
-    message: `Backend error response has invalid "${field}" field`,
-  });
-}
-
-function requireInt(json: Record<string, unknown>, field: string): number {
-  const value = json[field];
-  if (typeof value === 'number' && Number.isFinite(value)) {
-    return Math.trunc(value);
-  }
-
-  throw new InvalidResponseException({
-    message: `Backend error response has invalid "${field}" field`,
-  });
-}
-
-function requireTimestamp(json: Record<string, unknown>, field: string): Date {
-  const value = json[field];
-  if (typeof value !== 'string') {
-    throw new InvalidResponseException({
-      message: `Backend error response has invalid "${field}" field`,
-    });
-  }
-
-  const timestamp = new Date(value);
-  if (Number.isNaN(timestamp.getTime())) {
-    throw new InvalidResponseException({
-      message: `Backend error response has invalid "${field}" field`,
-    });
-  }
-
-  return timestamp;
 }
