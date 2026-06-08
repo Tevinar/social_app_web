@@ -3,12 +3,12 @@ import 'server-only';
 import type { Failure } from '@/core/errors/failures';
 import type { UseCase } from '@/core/use_case_intefaces';
 import type { User } from '@/features/auth/neutral/domain/entities/user';
-import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth_repository';
+import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
 import { err, type Result } from 'neverthrow';
 import {
   validateAuthEmailAndPassword,
   validateAuthName,
-} from './auth_input_validation';
+} from './auth-input-validation';
 
 /**
  * Input payload accepted by `SignUpWithEmailPasswordUseCase`.

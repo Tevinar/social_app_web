@@ -6,8 +6,8 @@ import { createServerAuthRepository } from '@/features/auth/server/data/reposito
 import {
   SignUpWithEmailPasswordUseCase,
   type SignUpWithEmailPasswordParams,
-} from '@/features/auth/server/domain/usecases/sign_up_with_email_password.usecase';
-import { UserModel } from '../../neutral/data/models/user_model';
+} from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
+import { UserModel } from '../../neutral/data/models/user-model';
 
 /**
  * Server Action that registers one user and returns a serializable user

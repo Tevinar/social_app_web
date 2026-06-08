@@ -3,12 +3,12 @@ import 'server-only';
 import { err, ok, type Result } from 'neverthrow';
 import { mapExceptionToFailure } from '@/core/errors/failures_mapper';
 import type { Failure } from '@/core/errors/failures';
-import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth_repository';
+import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
 import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
 import type { AuthBackendDataSource } from '@/features/auth/server/data/sources/remote/auth_backend_data_source';
 import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
 import type { User } from '@/features/auth/neutral/domain/entities/user';
-import { UserModel } from '@/features/auth/neutral/data/models/user_model';
+import { UserModel } from '@/features/auth/neutral/data/models/user-model';
 
 /**
  * Concrete AuthRepository that coordinates backend auth requests with

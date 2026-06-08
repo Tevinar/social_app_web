@@ -2,7 +2,7 @@ import 'server-only';
 
 import { JsonReader } from '@/core/serialization/json_reader';
 import { AuthSessionModel } from './auth_session_model';
-import { UserModel } from '@/features/auth/neutral/data/models/user_model';
+import { UserModel } from '@/features/auth/neutral/data/models/user-model';
 
 /**
  * Data model returned by sign-in and sign-up endpoints.

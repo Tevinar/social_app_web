@@ -2,7 +2,7 @@ import 'server-only';
 
 import type { Failure } from '@/core/errors/failures';
 import type { NoParamsUseCase } from '@/core/use_case_intefaces';
-import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth_repository';
+import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
 import type { Result } from 'neverthrow';
 
 /**
