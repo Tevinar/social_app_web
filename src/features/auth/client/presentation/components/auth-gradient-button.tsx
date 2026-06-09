@@ -19,7 +19,13 @@ export function AuthGradientButton({
       type="submit"
       className="h-13.75 w-full font-semibold text-white transition rounded-[10px] bg-linear-to-tr from-gradient-1 to-gradient-2"
     >
-      {disabled ? <Loader /> : buttonText}
+      {disabled ? (
+        <span className="flex justify-center">
+          <Loader />
+        </span>
+      ) : (
+        buttonText
+      )}
     </button>
   );
 }

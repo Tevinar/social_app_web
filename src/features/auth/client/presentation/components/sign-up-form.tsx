@@ -6,24 +6,24 @@ import { useRouter } from 'next/navigation';
 import { AuthGradientButton } from '@/features/auth/client/presentation/components/auth-gradient-button';
 import { AuthTextField } from '@/features/auth/client/presentation/components/auth-text-field';
 import {
-  signIn,
-  type SignInActionState,
-} from '@/features/auth/server/actions/sign-in';
+  signUp,
+  type SignUpActionState,
+} from '@/features/auth/server/actions/sign_up';
 import { routes } from '@/shell/neutral/routes';
 
-const initialSignInActionState: SignInActionState = {
+const initialSignUpActionState: SignUpActionState = {
   status: 'idle',
   errorMessage: null,
 };
 
 /**
- * Interactive sign-in form backed by the auth Server Action.
+ * Interactive sign-up form backed by the auth Server Action.
  */
-export function SignInForm() {
+export function SignUpForm() {
   const router = useRouter();
-  const [state, signInAction, isPending] = useActionState(
-    signIn,
-    initialSignInActionState,
+  const [state, signUpAction, isPending] = useActionState(
+    signUp,
+    initialSignUpActionState,
   );
 
   useEffect(() => {
@@ -34,17 +34,26 @@ export function SignInForm() {
 
   return (
     <form
-      action={signInAction}
+      action={signUpAction}
       className="flex w-md flex-col gap-5 rounded-[28px] border border-border bg-background px-7 py-8 shadow-[0_18px_60px_rgba(0,0,0,0.5)]"
     >
       <div className="flex flex-col gap-2">
         <p className="text-xs font-semibold uppercase tracking-[0.28em] text-white">
-          Welcome back
+          Join the community
         </p>
         <h1 className="text-3xl font-semibold tracking-tight text-white">
-          Sign in
+          Sign up
         </h1>
       </div>
+
+      <AuthTextField
+        label="Name"
+        name="name"
+        type="text"
+        autoComplete="name"
+        placeholder="Your full name"
+        disabled={isPending}
+      />
 
       <AuthTextField
         label="Email"
@@ -59,8 +68,8 @@ export function SignInForm() {
         label="Password"
         name="password"
         type="password"
-        autoComplete="current-password"
-        placeholder="Enter your password"
+        autoComplete="new-password"
+        placeholder="Create a password"
         disabled={isPending}
       />
 
@@ -68,15 +77,15 @@ export function SignInForm() {
         {state.status === 'error' ? state.errorMessage : null}
       </div>
 
-      <AuthGradientButton buttonText="Sign in" disabled={isPending} />
+      <AuthGradientButton buttonText="Sign up" disabled={isPending} />
 
       <p className="text-center text-sm text-grey-white">
-        Don&apos;t have an account?{' '}
+        Already have an account?{' '}
         <Link
-          href={routes.auth.signUp}
+          href={routes.auth.signIn}
           className="font-semibold transition text-gradient-2"
         >
-          Sign Up
+          Sign In
         </Link>
       </p>
     </form>

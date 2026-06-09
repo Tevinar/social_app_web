@@ -2,8 +2,7 @@
 
 import 'server-only';
 
-import { createServerAuthRepository } from '@/features/auth/server/data/repositories/create_auth_repository';
-import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
+import { serverDependencies } from '@/shell/server/dependencies';
 
 /**
  * Serializable UI state returned by the sign-in Server Action.
@@ -18,16 +17,14 @@ export type SignInActionState = {
  * serializable UI state for the sign-in page.
  */
 export async function signIn(
-  _previousState: SignInActionState,
+  _currentState: SignInActionState,
   formData: FormData,
 ): Promise<SignInActionState> {
-  const useCase = new SignInWithEmailPasswordUseCase(
-    createServerAuthRepository(),
-  );
-  const result = await useCase.execute({
-    email: String(formData.get('email') ?? ''),
-    password: String(formData.get('password') ?? ''),
-  });
+  const result =
+    await serverDependencies.auth.signInWithEmailPasswordUseCase.execute({
+      email: String(formData.get('email') ?? ''),
+      password: String(formData.get('password') ?? ''),
+    });
 
   if (result.isErr()) {
     return {

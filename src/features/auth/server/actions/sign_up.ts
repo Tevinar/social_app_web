@@ -2,28 +2,40 @@
 
 import 'server-only';
 
-import { createServerAuthRepository } from '@/features/auth/server/data/repositories/create_auth_repository';
-import {
-  SignUpWithEmailPasswordUseCase,
-  type SignUpWithEmailPasswordParams,
-} from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
-import { UserModel } from '../../neutral/data/models/user-model';
+import { serverDependencies } from '@/shell/server/dependencies';
 
 /**
- * Server Action that registers one user and returns a serializable user
- * snapshot for client-side consumption.
+ * Serializable UI state returned by the sign-up Server Action.
+ */
+export type SignUpActionState = {
+  readonly status: 'idle' | 'success' | 'error';
+  readonly errorMessage: string | null;
+};
+
+/**
+ * Server Action that registers one user from form data and returns a
+ * serializable UI state for a sign-up page.
  */
 export async function signUp(
-  params: SignUpWithEmailPasswordParams,
-): Promise<UserModel> {
-  const useCase = new SignUpWithEmailPasswordUseCase(
-    createServerAuthRepository(),
-  );
-  const result = await useCase.execute(params);
+  _currentState: SignUpActionState,
+  formData: FormData,
+): Promise<SignUpActionState> {
+  const result =
+    await serverDependencies.auth.signUpWithEmailPasswordUseCase.execute({
+      name: String(formData.get('name') ?? ''),
+      email: String(formData.get('email') ?? ''),
+      password: String(formData.get('password') ?? ''),
+    });
 
   if (result.isErr()) {
-    throw new Error(result.error.message);
+    return {
+      status: 'error',
+      errorMessage: result.error.message,
+    };
   }
 
-  return UserModel.fromEntity(result.value);
+  return {
+    status: 'success',
+    errorMessage: null,
+  };
 }

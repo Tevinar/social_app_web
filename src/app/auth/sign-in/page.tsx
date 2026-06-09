@@ -2,7 +2,7 @@ import { SignInForm } from '@/features/auth/client/presentation/components/sign-
 
 export default function SignInPage() {
   return (
-    <main className="min-h-screen flex items-center justify-center --color-secondary-background">
+    <main className="flex min-h-screen items-center justify-center bg-secondary-background">
       <SignInForm />
     </main>
   );
