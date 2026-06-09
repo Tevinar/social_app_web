@@ -61,7 +61,8 @@
       "^.+\\.(t|j)sx?$": "ts-jest"
     },
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/$1"
+      "^@/(.*)$": "<rootDir>/$1",
+      "^server-only$": "<rootDir>/test/mocks/server-only.ts"
     },
     "setupFilesAfterEnv": [
       "@testing-library/jest-dom"
