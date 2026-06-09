@@ -1,5 +1,5 @@
 export enum EnvVariable {
-  NodeEnv = 'NODE_ENV',
+  AppEnv = 'APP_ENV',
   LogLevel = 'LOG_LEVEL',
   ApiBaseUrl = 'API_BASE_URL',
 }

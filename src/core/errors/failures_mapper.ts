@@ -60,12 +60,6 @@ function mapServerExceptionToFailure(error: ServerException): Failure {
         error.message,
       );
 
-    case 'user_already_signed_in_on_device':
-      return new AuthenticationFailure(
-        AuthFailureMessages.alreadySignedInOnDevice,
-        error.message,
-      );
-
     case 'invalid_email':
       return new ValidationFailure(
         AuthFailureMessages.invalidEmail,

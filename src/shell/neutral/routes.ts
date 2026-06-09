@@ -5,6 +5,7 @@ type AppRoutes = {
   auth: {
     signIn: Route;
     signUp: Route;
+    sessionCheck: Route;
   };
 };
 
@@ -13,5 +14,6 @@ export const routes = {
   auth: {
     signIn: '/auth/sign-in',
     signUp: '/auth/sign-up',
+    sessionCheck: '/auth/session-check',
   },
 } as const satisfies AppRoutes;

@@ -2,6 +2,7 @@ import 'server-only';
 
 import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
+import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
 import { cookies } from 'next/headers';
 import { randomUUID } from 'node:crypto';
 
@@ -30,7 +31,7 @@ export interface DeviceIdStore {
 export class CookieDeviceIdStore implements DeviceIdStore {
   async getDeviceId(): Promise<string | null> {
     const cookieStore = await cookies();
-    const deviceId = cookieStore.get(DEVICE_ID_COOKIE_NAME)?.value;
+    const deviceId = cookieStore.get(authCookies.deviceId)?.value;
 
     return typeof deviceId === 'string' && deviceId.length > 0
       ? deviceId
@@ -46,9 +47,11 @@ export class CookieDeviceIdStore implements DeviceIdStore {
     const deviceId = randomUUID();
     const cookieStore = await cookies();
 
-    cookieStore.set(DEVICE_ID_COOKIE_NAME, deviceId, {
+    cookieStore.set(authCookies.deviceId, deviceId, {
       httpOnly: true,
-      secure: process.env[EnvVariable.NodeEnv] === Environment.Production,
+      secure:
+        process.env[EnvVariable.AppEnv] === Environment.Production ||
+        process.env[EnvVariable.AppEnv] === Environment.Staging,
       sameSite: 'lax',
       path: '/',
       maxAge: DEVICE_ID_COOKIE_MAX_AGE_SECONDS,
@@ -57,12 +60,6 @@ export class CookieDeviceIdStore implements DeviceIdStore {
     return deviceId;
   }
 }
-
-/**
- * Cookie name used to persist the stable device identifier required by the
- * auth API.
- */
-const DEVICE_ID_COOKIE_NAME = 'device_id';
 
 /**
  * Default cookie lifetime for the stable device identifier, expressed in

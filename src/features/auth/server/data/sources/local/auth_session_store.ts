@@ -1,14 +1,15 @@
 import 'server-only';
 
-import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
 import { requireSecretFile } from '@/core/config/require_secret_file';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { JsonReader } from '@/core/serialization/json_reader';
+import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
 import { AuthSessionModel } from '@/features/auth/server/data/models/auth_session_model';
 import { EncryptJWT, jwtDecrypt } from 'jose';
 import { cookies } from 'next/headers';
 import { createHash } from 'node:crypto';
+import { Environment } from '@/core/config/environment';
 
 /**
  * Local store for the authenticated session cookie.
@@ -36,7 +37,7 @@ export interface AuthSessionStore {
 export class EncryptedCookieAuthSessionStore implements AuthSessionStore {
   async getSession(): Promise<AuthSessionModel | null> {
     const cookieStore = await cookies();
-    const raw = cookieStore.get(AUTH_SESSION_COOKIE_NAME)?.value;
+    const raw = cookieStore.get(authCookies.session)?.value;
     if (!raw) {
       return null;
     }
@@ -50,14 +51,16 @@ export class EncryptedCookieAuthSessionStore implements AuthSessionStore {
   async saveSession(session: AuthSessionModel): Promise<void> {
     const cookieStore = await cookies();
     cookieStore.set(
-      AUTH_SESSION_COOKIE_NAME,
+      authCookies.session,
       await this.encryptSession(
         session,
         requireSecretFile(AUTH_SESSION_SECRET_FILE_NAME),
       ),
       {
         httpOnly: true,
-        secure: process.env[EnvVariable.NodeEnv] === Environment.Production,
+        secure:
+          process.env[EnvVariable.AppEnv] === Environment.Production ||
+          process.env[EnvVariable.AppEnv] === Environment.Staging,
         sameSite: 'lax',
         path: '/',
         expires: session.refreshTokenExpiresAt,
@@ -67,7 +70,7 @@ export class EncryptedCookieAuthSessionStore implements AuthSessionStore {
 
   async clearSession(): Promise<void> {
     const cookieStore = await cookies();
-    cookieStore.delete(AUTH_SESSION_COOKIE_NAME);
+    cookieStore.delete(authCookies.session);
   }
 
   /**
@@ -116,11 +119,6 @@ export class EncryptedCookieAuthSessionStore implements AuthSessionStore {
     return createHash('sha256').update(secret, 'utf8').digest();
   }
 }
-
-/**
- * Cookie name used to persist the encrypted authenticated session payload.
- */
-const AUTH_SESSION_COOKIE_NAME = 'auth_session';
 
 /**
  * Secret file that stores the encryption key used to protect the auth-session

@@ -2,9 +2,14 @@
 
 import Link from 'next/link';
 import { useActionState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AuthGradientButton } from '@/features/auth/client/presentation/components/auth-gradient-button';
 import { AuthTextField } from '@/features/auth/client/presentation/components/auth-text-field';
+import {
+  authAttemptSources,
+  authErrorCodes,
+  authSearchParams,
+} from '@/features/auth/neutral/constants/auth-search-params';
 import {
   signUp,
   type SignUpActionState,
@@ -21,14 +26,33 @@ const initialSignUpActionState: SignUpActionState = {
  */
 export function SignUpForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [state, signUpAction, isPending] = useActionState(
     signUp,
     initialSignUpActionState,
   );
+  let errorMessage: string | null = null;
+
+  if (state.status === 'error') {
+    errorMessage = state.errorMessage;
+    // Handles errors returned directly from the Server Action (e.g. invalid credentials)
+  } else if (
+    searchParams.get(authSearchParams.error) === authErrorCodes.sessionRequired
+  ) {
+    // Handles the case where authentication succeeded but the session cookie could not be set in the browser
+    // (e.g. due to cookies being disabled).
+    errorMessage =
+      'Authentication succeeded, but the session could not be saved. Please enable cookies and try again.';
+  }
 
   useEffect(() => {
     if (state.status === 'success') {
-      router.replace(routes.home);
+      // After a successful sign-up, we need to verify that the session cookie was properly set in the browser.
+      // We do this by redirecting to a dedicated session check page that will attempt to read the session
+      // cookie and redirect back to the sign-up page with an error if the cookie is not present.
+      router.replace(
+        `${routes.auth.sessionCheck}?${authSearchParams.attempt}=${authAttemptSources.signUp}`,
+      );
     }
   }, [router, state.status]);
 
@@ -74,7 +98,7 @@ export function SignUpForm() {
       />
 
       <div aria-live="polite" className="min-h-5 text-sm text-error">
-        {state.status === 'error' ? state.errorMessage : null}
+        {errorMessage}
       </div>
 
       <AuthGradientButton buttonText="Sign up" disabled={isPending} />

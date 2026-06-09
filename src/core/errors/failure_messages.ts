@@ -16,5 +16,4 @@ export const AuthFailureMessages = {
   emailAlreadyInUse: 'Email already in use.',
   invalidName: 'Please enter a valid name.',
   invalidDeviceId: 'Unable to validate this device. Please try again.',
-  alreadySignedInOnDevice: 'This account is already signed in on this device.',
 } as const;
