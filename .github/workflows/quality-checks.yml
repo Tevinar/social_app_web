@@ -66,5 +66,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Prepare build env
+        run: cp .env.example .env
+
       - name: Verify application build
         run: npm run build

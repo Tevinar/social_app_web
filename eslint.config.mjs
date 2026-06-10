@@ -21,6 +21,12 @@ const eslintConfig = defineConfig([
     rules: {
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        {
+          argsIgnorePattern: '^_',
+        },
+      ],
       '@typescript-eslint/no-unsafe-argument': 'error',
       '@typescript-eslint/no-unsafe-assignment': 'error',
       '@typescript-eslint/no-unsafe-call': 'error',
@@ -29,7 +35,11 @@ const eslintConfig = defineConfig([
     },
   },
   {
-    files: ['src/{components,hooks,lib}/**/*.{ts,tsx}'],
+    files: [
+      'src/core/**/*.{ts,tsx}',
+      'src/features/**/domain/**/*.{ts,tsx}',
+      'src/features/**/presentation/hooks/**/*.{ts,tsx}',
+    ],
     plugins: {
       jsdoc,
     },
@@ -37,11 +47,14 @@ const eslintConfig = defineConfig([
       'jsdoc/require-jsdoc': [
         'warn',
         {
+          contexts: ['TSInterfaceDeclaration', 'TSMethodSignature'],
           publicOnly: true,
+          checkConstructors: false,
           require: {
             ArrowFunctionExpression: true,
             ClassDeclaration: true,
             FunctionDeclaration: true,
+            MethodDefinition: true,
           },
         },
       ],
