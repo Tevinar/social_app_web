@@ -6,10 +6,10 @@ import { EncryptJWT, jwtDecrypt } from 'jose';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
-import { requireSecretFile } from '@/core/config/require_secret_file';
+import { requireSecretFile } from '@/core/config/require-secret-file';
 import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
-import { AuthSessionModel } from '@/features/auth/server/data/models/auth_session_model';
-import { EncryptedCookieAuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
+import { AuthSessionModel } from '@/features/auth/server/data/models/auth-session-model';
+import { EncryptedCookieAuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
 
 // Mock Next's request-scoped cookie store because this datasource persists auth state through cookies.
 jest.mock('next/headers', () => ({

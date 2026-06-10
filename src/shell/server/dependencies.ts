@@ -1,14 +1,14 @@
 import 'server-only';
 
-import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth_repository_impl';
-import { EncryptedCookieAuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
-import { CookieDeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
+import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth-repository-impl';
+import { EncryptedCookieAuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
+import { CookieDeviceIdStore } from '@/features/auth/server/data/sources/local/device-id-store';
 import { GetCurrentUserIdUseCase } from '@/features/auth/server/domain/usecases/get-current-user-id.usecase';
 import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
 import { SignUpWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
-import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign_out_current_user.usecase';
-import { FetchHttpClient } from '@/core/http/http_client';
-import { AuthRemoteDataSourceImpl } from '@/features/auth/server/data/sources/remote/auth_backend_data_source';
+import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign-out-current-user.usecase';
+import { FetchHttpClient } from '@/core/http/http-client';
+import { AuthRemoteDataSourceImpl } from '@/features/auth/server/data/sources/remote/auth-backend-data-source';
 
 const httpClient = new FetchHttpClient();
 

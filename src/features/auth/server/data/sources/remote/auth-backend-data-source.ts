@@ -1,7 +1,7 @@
 import 'server-only';
 
-import type { HttpClient } from '@/core/http/http_client';
-import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated_user_model';
+import type { HttpClient } from '@/core/http/http-client';
+import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated-user-model';
 
 /**
  * Remote boundary for direct backend authentication requests.

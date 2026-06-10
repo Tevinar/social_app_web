@@ -1,7 +1,7 @@
 import 'server-only';
 
-import { JsonReader } from '@/core/serialization/json_reader';
-import { AuthSessionModel } from './auth_session_model';
+import { JsonReader } from '@/core/serialization/json-reader';
+import { AuthSessionModel } from './auth-session-model';
 import { UserModel } from '@/features/auth/neutral/data/models/user-model';
 
 /**

@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { AuthFailureMessages } from '@/core/errors/failure_messages';
+import { AuthFailureMessages } from '@/core/errors/failure-messages';
 import { ValidationFailure } from '@/core/errors/failures';
 import {
   validateAuthEmailAndPassword,

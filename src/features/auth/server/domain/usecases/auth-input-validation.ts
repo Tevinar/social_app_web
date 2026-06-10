@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { AuthFailureMessages } from '@/core/errors/failure_messages';
+import { AuthFailureMessages } from '@/core/errors/failure-messages';
 import { ValidationFailure } from '@/core/errors/failures';
 
 const MINIMUM_PASSWORD_LENGTH = 6;

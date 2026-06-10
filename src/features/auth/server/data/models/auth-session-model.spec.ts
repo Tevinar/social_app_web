@@ -1,7 +1,7 @@
 /** @jest-environment node */
 
 import { InvalidResponseException } from '@/core/errors/exceptions';
-import { AuthSessionModel } from '@/features/auth/server/data/models/auth_session_model';
+import { AuthSessionModel } from '@/features/auth/server/data/models/auth-session-model';
 
 describe('AuthSessionModel', () => {
   const json = {

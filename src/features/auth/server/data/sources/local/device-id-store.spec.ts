@@ -5,7 +5,7 @@ import { randomUUID } from 'node:crypto';
 import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
 import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
-import { CookieDeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
+import { CookieDeviceIdStore } from '@/features/auth/server/data/sources/local/device-id-store';
 
 // Mock Next's request-scoped cookie store because this datasource persists device ids through cookies.
 jest.mock('next/headers', () => ({

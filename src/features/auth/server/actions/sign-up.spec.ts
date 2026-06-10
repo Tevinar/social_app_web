@@ -3,7 +3,7 @@
 import { err, ok } from 'neverthrow';
 import { ValidationFailure } from '@/core/errors/failures';
 import { User } from '@/features/auth/neutral/domain/entities/user';
-import { signUp } from '@/features/auth/server/actions/sign_up';
+import { signUp } from '@/features/auth/server/actions/sign-up';
 import { serverDependencies } from '@/shell/server/dependencies';
 
 // Mock the composition root so the action test can control the injected use case directly.

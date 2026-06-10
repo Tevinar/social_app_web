@@ -1,4 +1,4 @@
-import { AuthFailureMessages, CommonFailureMessages } from './failure_messages';
+import { AuthFailureMessages, CommonFailureMessages } from './failure-messages';
 import {
   AuthenticationFailure,
   Failure,

@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
   UnexpectedException,
 } from './exceptions';
-import { JsonReader } from '@/core/serialization/json_reader';
+import { JsonReader } from '@/core/serialization/json-reader';
 
 /**
  * Runs one remote data source operation behind a consistent exception

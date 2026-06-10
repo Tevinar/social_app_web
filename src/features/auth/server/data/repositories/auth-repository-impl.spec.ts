@@ -4,11 +4,11 @@ import { UnexpectedFailure } from '@/core/errors/failures';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { User } from '@/features/auth/neutral/domain/entities/user';
 import { UserModel } from '@/features/auth/neutral/data/models/user-model';
-import { AuthSessionModel } from '@/features/auth/server/data/models/auth_session_model';
-import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth_repository_impl';
-import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
-import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
-import { AuthRemoteDataSource } from '../sources/remote/auth_backend_data_source';
+import { AuthSessionModel } from '@/features/auth/server/data/models/auth-session-model';
+import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth-repository-impl';
+import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
+import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device-id-store';
+import { AuthRemoteDataSource } from '../sources/remote/auth-backend-data-source';
 describe('AuthRepositoryImpl', () => {
   const session = new AuthSessionModel(
     'user_1',
