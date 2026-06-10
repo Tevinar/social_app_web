@@ -8,8 +8,7 @@ import { AuthSessionModel } from '@/features/auth/server/data/models/auth_sessio
 import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth_repository_impl';
 import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
 import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
-import type { AuthBackendDataSource } from '@/features/auth/server/data/sources/remote/auth_backend_data_source';
-
+import { AuthRemoteDataSource } from '../sources/remote/auth_backend_data_source';
 describe('AuthRepositoryImpl', () => {
   const session = new AuthSessionModel(
     'user_1',
@@ -22,7 +21,7 @@ describe('AuthRepositoryImpl', () => {
     new User('user_1', 'Alice', 'alice@example.com'),
   );
 
-  const backend: jest.Mocked<AuthBackendDataSource> = {
+  const backend: jest.Mocked<AuthRemoteDataSource> = {
     signUpWithEmailPassword: jest.fn(),
     signInWithEmailPassword: jest.fn(),
     signOut: jest.fn(),

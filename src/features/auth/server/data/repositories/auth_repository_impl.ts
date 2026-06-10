@@ -5,10 +5,10 @@ import { mapExceptionToFailure } from '@/core/errors/failures_mapper';
 import type { Failure } from '@/core/errors/failures';
 import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
 import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device_id_store';
-import type { AuthBackendDataSource } from '@/features/auth/server/data/sources/remote/auth_backend_data_source';
 import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth_session_store';
 import type { User } from '@/features/auth/neutral/domain/entities/user';
 import { UserModel } from '@/features/auth/neutral/data/models/user-model';
+import { AuthRemoteDataSource } from '../sources/remote/auth_backend_data_source';
 
 /**
  * Concrete AuthRepository that coordinates backend auth requests with
@@ -16,7 +16,7 @@ import { UserModel } from '@/features/auth/neutral/data/models/user-model';
  */
 export class AuthRepositoryImpl implements AuthRepository {
   constructor(
-    private readonly authBackendDataSource: AuthBackendDataSource,
+    private readonly authRemoteDataSource: AuthRemoteDataSource,
     private readonly authSessionStore: AuthSessionStore,
     private readonly deviceIdStore: DeviceIdStore,
   ) {}
@@ -37,7 +37,7 @@ export class AuthRepositoryImpl implements AuthRepository {
     try {
       const deviceId = await this.deviceIdStore.getOrCreateDeviceId();
       const authenticatedUser =
-        await this.authBackendDataSource.signInWithEmailPassword({
+        await this.authRemoteDataSource.signInWithEmailPassword({
           ...params,
           deviceId,
         });
@@ -57,7 +57,7 @@ export class AuthRepositoryImpl implements AuthRepository {
     try {
       const deviceId = await this.deviceIdStore.getOrCreateDeviceId();
       const authenticatedUser =
-        await this.authBackendDataSource.signUpWithEmailPassword({
+        await this.authRemoteDataSource.signUpWithEmailPassword({
           ...params,
           deviceId,
         });
@@ -77,7 +77,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       const deviceId = await this.deviceIdStore.getDeviceId();
 
       if (session !== null && deviceId !== null) {
-        await this.authBackendDataSource.signOut({
+        await this.authRemoteDataSource.signOut({
           refreshToken: session.refreshToken,
           deviceId,
         });

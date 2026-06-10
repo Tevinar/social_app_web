@@ -6,7 +6,7 @@ import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authe
 /**
  * Remote boundary for direct backend authentication requests.
  */
-export interface AuthBackendDataSource {
+export interface AuthRemoteDataSource {
   /**
    * Registers a user and returns the authenticated user payload.
    */
@@ -33,9 +33,9 @@ export interface AuthBackendDataSource {
 }
 
 /**
- * Backend-facing implementation of `AuthBackendDataSource`.
+ * Backend-facing implementation of `AuthRemoteDataSource`.
  */
-export class NestAuthBackendDataSource implements AuthBackendDataSource {
+export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   constructor(private readonly httpClient: HttpClient) {}
 
   async signUpWithEmailPassword(params: {
