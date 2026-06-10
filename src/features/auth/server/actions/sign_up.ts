@@ -3,6 +3,7 @@
 import 'server-only';
 
 import { serverDependencies } from '@/shell/server/dependencies';
+import { readFormDataString } from '@/features/auth/server/actions/read-form-data-string';
 
 /**
  * Serializable UI state returned by the sign-up Server Action.
@@ -22,9 +23,9 @@ export async function signUp(
 ): Promise<SignUpActionState> {
   const result =
     await serverDependencies.auth.signUpWithEmailPasswordUseCase.execute({
-      name: String(formData.get('name') ?? ''),
-      email: String(formData.get('email') ?? ''),
-      password: String(formData.get('password') ?? ''),
+      name: readFormDataString(formData, 'name'),
+      email: readFormDataString(formData, 'email'),
+      password: readFormDataString(formData, 'password'),
     });
 
   if (result.isErr()) {

@@ -66,4 +66,32 @@ describe('signUp action', () => {
       password: '123456',
     });
   });
+
+  it('given file entries in the sign-up form when the action runs then it passes empty strings instead of object stringification', async () => {
+    execute.mockResolvedValue(
+      ok(new User('user_1', 'Alice', 'alice@example.com')),
+    );
+
+    const formData = new FormData();
+    formData.set(
+      'name',
+      new File(['Alice'], 'name.txt', { type: 'text/plain' }),
+    );
+    formData.set(
+      'email',
+      new File(['alice@example.com'], 'email.txt', { type: 'text/plain' }),
+    );
+    formData.set(
+      'password',
+      new File(['123456'], 'password.txt', { type: 'text/plain' }),
+    );
+
+    await signUp({ status: 'idle', errorMessage: null }, formData);
+
+    expect(execute).toHaveBeenCalledWith({
+      name: '',
+      email: '',
+      password: '',
+    });
+  });
 });
