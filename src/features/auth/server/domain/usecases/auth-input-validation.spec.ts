@@ -37,6 +37,36 @@ describe('auth-input-validation', () => {
 
       expect(result).toBeNull();
     });
+
+    it('given an email containing spaces when validating credentials then it returns an email validation failure', () => {
+      const result = validateAuthEmailAndPassword({
+        email: 'user @example.com',
+        password: '123456',
+      });
+
+      expect(result).toBeInstanceOf(ValidationFailure);
+      expect(result?.message).toBe(AuthFailureMessages.invalidEmail);
+    });
+
+    it('given an email with multiple @ signs when validating credentials then it returns an email validation failure', () => {
+      const result = validateAuthEmailAndPassword({
+        email: 'user@@example.com',
+        password: '123456',
+      });
+
+      expect(result).toBeInstanceOf(ValidationFailure);
+      expect(result?.message).toBe(AuthFailureMessages.invalidEmail);
+    });
+
+    it('given an email without a dotted domain when validating credentials then it returns an email validation failure', () => {
+      const result = validateAuthEmailAndPassword({
+        email: 'user@example',
+        password: '123456',
+      });
+
+      expect(result).toBeInstanceOf(ValidationFailure);
+      expect(result?.message).toBe(AuthFailureMessages.invalidEmail);
+    });
   });
 
   describe('validateAuthName', () => {

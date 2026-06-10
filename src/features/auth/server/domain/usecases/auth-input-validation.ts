@@ -5,7 +5,7 @@ import { ValidationFailure } from '@/core/errors/failures';
 
 const MINIMUM_PASSWORD_LENGTH = 6;
 const MINIMUM_NAME_LENGTH = 3;
-const EMAIL_REGEXP = /^[^\s@]+@[^\s@]+\.[^\s@]+$/u;
+const MAXIMUM_EMAIL_LENGTH = 254;
 
 /**
  * Validates email/password credentials before calling auth repositories.
@@ -18,7 +18,7 @@ export function validateAuthEmailAndPassword(params: {
   email: string;
   password: string;
 }): ValidationFailure | null {
-  if (!EMAIL_REGEXP.test(params.email)) {
+  if (!isValidEmail(params.email)) {
     return new ValidationFailure(AuthFailureMessages.invalidEmail);
   }
 
@@ -38,4 +38,37 @@ export function validateAuthName(name: string): ValidationFailure | null {
   }
 
   return null;
+}
+
+function isValidEmail(email: string): boolean {
+  if (email.length === 0 || email.length > MAXIMUM_EMAIL_LENGTH) {
+    return false;
+  }
+
+  if (email.includes(' ')) {
+    return false;
+  }
+
+  const atIndex = email.indexOf('@');
+  if (atIndex <= 0 || atIndex !== email.lastIndexOf('@')) {
+    return false;
+  }
+
+  const localPart = email.slice(0, atIndex);
+  const domainPart = email.slice(atIndex + 1);
+
+  if (localPart.length === 0 || domainPart.length === 0) {
+    return false;
+  }
+
+  if (domainPart.startsWith('.') || domainPart.endsWith('.')) {
+    return false;
+  }
+
+  const domainLabels = domainPart.split('.');
+  if (domainLabels.length < 2) {
+    return false;
+  }
+
+  return domainLabels.every((label) => label.length > 0);
 }
