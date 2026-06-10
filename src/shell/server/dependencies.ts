@@ -8,8 +8,12 @@ import { GetCurrentUserIdUseCase } from '@/features/auth/server/domain/usecases/
 import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
 import { SignUpWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
 import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign_out_current_user.usecase';
+import { FetchHttpClient } from '@/core/http/http_client';
 
-const authBackendDataSource = new NestAuthBackendDataSource();
+const httpClient = new FetchHttpClient();
+
+// Auth feature dependencies
+const authBackendDataSource = new NestAuthBackendDataSource(httpClient);
 const authSessionStore = new EncryptedCookieAuthSessionStore();
 const deviceIdStore = new CookieDeviceIdStore();
 const authRepository = new AuthRepositoryImpl(

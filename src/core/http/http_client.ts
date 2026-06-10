@@ -2,6 +2,7 @@ import {
   guardRemoteDataSourceCall,
   parseServerExceptionFromResponse,
 } from '@/core/errors/exceptions_mapper';
+import { EnvVariable } from '@/core/config/env-variable';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { JsonReader } from '@/core/serialization/json_reader';
 
@@ -50,34 +51,21 @@ export interface HttpClient {
   requestVoid(params: HttpRequestParams): Promise<void>;
 }
 
-type FetchLike = typeof fetch;
-
 /**
  * `fetch`-backed implementation of `HttpClient`.
  *
- * This keeps the app aligned with Next.js' native fetch model while
- * centralizing common HTTP mechanics such as JSON serialization and backend
- * error parsing.
+ * This uses the global `fetch` implementation together with the configured API
+ * base URL while centralizing common HTTP mechanics such as JSON
+ * serialization and backend error parsing.
  */
 export class FetchHttpClient implements HttpClient {
-  /**
-   * Creates a `FetchHttpClient`.
-   *
-   * `fetchFn` allows the client to reuse the native `fetch` implementation by
-   * default while still supporting injection in tests or specialized wrappers.
-   * `basePath` defines the same-origin Next.js API prefix prepended to relative
-   * feature paths such as `/auth/sign-in`.
-   */
-  constructor(
-    private readonly fetchFn: FetchLike = fetch,
-    private readonly basePath = '/api',
-  ) {}
+  private readonly basePath = requireApiBaseUrl();
 
   async requestJson(
     params: HttpRequestParams,
   ): Promise<Record<string, unknown>> {
     return guardRemoteDataSourceCall(async () => {
-      const response = await this.fetchFn(
+      const response = await fetch(
         this.buildRequestPath(params.path),
         this.buildRequestInit(params),
       );
@@ -92,7 +80,7 @@ export class FetchHttpClient implements HttpClient {
 
   async requestVoid(params: HttpRequestParams): Promise<void> {
     return guardRemoteDataSourceCall(async () => {
-      const response = await this.fetchFn(
+      const response = await fetch(
         this.buildRequestPath(params.path),
         this.buildRequestInit(params),
       );
@@ -126,8 +114,8 @@ export class FetchHttpClient implements HttpClient {
   }
 
   /**
-   * Builds the final same-origin request path from the configured base path
-   * and one relative endpoint path.
+   * Builds the final backend request path from the configured API base URL and
+   * one relative endpoint path.
    */
   private buildRequestPath(path: string): string {
     return `${trimTrailingSlash(this.basePath)}${ensureLeadingSlash(path)}`;
@@ -159,4 +147,13 @@ function trimTrailingSlash(value: string): string {
 
 function ensureLeadingSlash(value: string): string {
   return value.startsWith('/') ? value : `/${value}`;
+}
+
+function requireApiBaseUrl(): string {
+  const apiBaseUrl = process.env[EnvVariable.ApiBaseUrl];
+  if (!apiBaseUrl) {
+    throw new Error(`${EnvVariable.ApiBaseUrl} is not configured`);
+  }
+
+  return apiBaseUrl;
 }

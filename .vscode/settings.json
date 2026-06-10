@@ -4,5 +4,9 @@
   "js/ts.tsdk.path": "node_modules/typescript/lib",
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
-  "less.lint.unknownAtRules": "ignore"
+  "less.lint.unknownAtRules": "ignore",
+  "sonarlint.connectedMode.project": {
+    "connectionId": "tevinar-sonarqube-cloud",
+    "projectKey": "Tevinar_social_app_web"
+  }
 }

@@ -1,7 +1,6 @@
 import 'server-only';
 
-import { EnvVariable } from '@/core/config/env-variable';
-import { FetchHttpClient, type HttpClient } from '@/core/http/http_client';
+import type { HttpClient } from '@/core/http/http_client';
 import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated_user_model';
 
 /**
@@ -37,12 +36,7 @@ export interface AuthBackendDataSource {
  * Backend-facing implementation of `AuthBackendDataSource`.
  */
 export class NestAuthBackendDataSource implements AuthBackendDataSource {
-  constructor(
-    private readonly httpClient: HttpClient = new FetchHttpClient(
-      fetch,
-      requireApiBaseUrl(),
-    ),
-  ) {}
+  constructor(private readonly httpClient: HttpClient) {}
 
   async signUpWithEmailPassword(params: {
     name: string;
@@ -95,13 +89,4 @@ export class NestAuthBackendDataSource implements AuthBackendDataSource {
       },
     });
   }
-}
-
-function requireApiBaseUrl(): string {
-  const apiBaseUrl = process.env[EnvVariable.ApiBaseUrl];
-  if (!apiBaseUrl) {
-    throw new Error(`${EnvVariable.ApiBaseUrl} is not configured`);
-  }
-
-  return apiBaseUrl;
 }
