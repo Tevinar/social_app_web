@@ -16,15 +16,19 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
 
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col items-center justify-center gap-4 bg-secondary-background px-6 text-center">
-        <NextError statusCode={0} />
-        <button
-          type="button"
-          onClick={reset}
-          className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
-        >
-          Retry
-        </button>
+      <body>
+        <main className="flex min-h-screen items-center justify-center bg-secondary-background">
+          <div className="flex w-md flex-col gap-5 items-center text-center rounded-[28px] border border-border bg-background px-7 py-8 shadow-[0_18px_60px_rgba(0,0,0,0.5)]">
+            <NextError statusCode={0} />
+            <button
+              type="button"
+              onClick={reset}
+              className="rounded-full bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground"
+            >
+              Retry
+            </button>
+          </div>
+        </main>
       </body>
     </html>
   );

@@ -2,12 +2,31 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Next.js: debug full stack",
+      "name": "Next.js: debug mode with local backend",
       "type": "node",
       "request": "launch",
       "runtimeVersion": "22",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
+      "skipFiles": ["<node_internals>/**"],
+      "serverReadyAction": {
+        "action": "openExternally",
+        "killOnServerStop": true,
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s"
+      }
+    },
+    {
+      "name": "Next.js: production mode with local backend",
+      "type": "node",
+      "request": "launch",
+      "runtimeVersion": "22",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "start"],
+      "env": {
+        "PORT": "3001"
+      },
+      "preLaunchTask": "npm: build",
       "skipFiles": ["<node_internals>/**"],
       "serverReadyAction": {
         "action": "openExternally",
