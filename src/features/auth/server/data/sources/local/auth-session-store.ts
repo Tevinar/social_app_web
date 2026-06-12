@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { EnvVariable } from '@/core/config/env-variable';
-import { requireSecretFile } from '@/core/config/require-secret-file';
+import { requireSecretFile } from '@/core/config/read-secret-file';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { JsonReader } from '@/core/serialization/json-reader';
 import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';

@@ -6,7 +6,7 @@ import { EncryptJWT, jwtDecrypt } from 'jose';
 import { InvalidResponseException } from '@/core/errors/exceptions';
 import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
-import { requireSecretFile } from '@/core/config/require-secret-file';
+import { requireSecretFile } from '@/core/config/read-secret-file';
 import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
 import { AuthSessionModel } from '@/features/auth/server/data/models/auth-session-model';
 import { EncryptedCookieAuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
