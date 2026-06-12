@@ -2,7 +2,9 @@
 
 import 'server-only';
 
-import { serverDependencies } from '@/shell/server/dependencies';
+import * as Sentry from '@sentry/nextjs';
+import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign-out-current-user.usecase';
+import { serverContainer } from '@/shell/server/init-dependencies';
 
 /**
  * Serializable UI state returned by the sign-out Server Action.
@@ -19,18 +21,24 @@ export type SignOutActionState = {
 export async function signOut(
   _currentState: SignOutActionState,
 ): Promise<SignOutActionState> {
-  const result =
-    await serverDependencies.auth.signOutCurrentUserUseCase.execute();
+  return Sentry.withServerActionInstrumentation(
+    'signOut',
+    async (): Promise<SignOutActionState> => {
+      const result = await serverContainer
+        .resolve(SignOutCurrentUserUseCase)
+        .execute();
 
-  if (result.isErr()) {
-    return {
-      status: 'error',
-      errorMessage: result.error.message,
-    };
-  }
+      if (result.isErr()) {
+        return {
+          status: 'error',
+          errorMessage: result.error.message,
+        };
+      }
 
-  return {
-    status: 'success',
-    errorMessage: null,
-  };
+      return {
+        status: 'success',
+        errorMessage: null,
+      };
+    },
+  );
 }

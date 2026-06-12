@@ -4,7 +4,7 @@ import { err, ok } from 'neverthrow';
 import { ValidationFailure } from '@/core/errors/failures';
 import { User } from '@/features/auth/neutral/domain/entities/user';
 import { signUp } from '@/features/auth/server/actions/sign-up';
-import { serverDependencies } from '@/shell/server/dependencies';
+import { serverDependencies } from '@/shell/server/init-dependencies';
 
 // Mock the composition root so the action test can control the injected use case directly.
 jest.mock('@/shell/server/dependencies', () => ({

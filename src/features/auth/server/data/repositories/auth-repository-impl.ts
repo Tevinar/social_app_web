@@ -2,13 +2,15 @@ import 'server-only';
 
 import { err, ok, type Result } from 'neverthrow';
 import { mapExceptionToFailure } from '@/core/errors/failures-mapper';
-import type { Failure } from '@/core/errors/failures';
+import { UnexpectedFailure, type Failure } from '@/core/errors/failures';
 import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
 import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/device-id-store';
 import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
 import type { User } from '@/features/auth/neutral/domain/entities/user';
 import { UserModel } from '@/features/auth/neutral/data/models/user-model';
-import { AuthRemoteDataSource } from '../sources/remote/auth-backend-data-source';
+import { serverContainer } from '@/shell/server/init-dependencies';
+import { PinoAppLogger } from '@/shell/server/logging/pino-app-logger';
+import type { AuthRemoteDataSource } from '../sources/remote/auth-backend-data-source';
 
 /**
  * Concrete AuthRepository that coordinates backend auth requests with
@@ -26,7 +28,25 @@ export class AuthRepositoryImpl implements AuthRepository {
       const session = await this.authSessionStore.getSession();
       return ok(session?.userId ?? null);
     } catch (error) {
-      return err(mapExceptionToFailure(error));
+      const failure = mapExceptionToFailure(error);
+
+      if (
+        failure instanceof UnexpectedFailure &&
+        !isNextDynamicServerUsageError(error)
+      ) {
+        getAppLogger().error(
+          'Failed to resolve the current authenticated user id',
+          {
+            error,
+            data: {
+              area: 'auth-repository',
+              operation: 'getCurrentUserId',
+            },
+          },
+        );
+      }
+
+      return err(failure);
     }
   }
 
@@ -45,7 +65,22 @@ export class AuthRepositoryImpl implements AuthRepository {
       await this.authSessionStore.saveSession(authenticatedUser.session);
       return ok(UserModel.toEntity(authenticatedUser.user));
     } catch (error) {
-      return err(mapExceptionToFailure(error));
+      const failure = mapExceptionToFailure(error);
+
+      if (failure instanceof UnexpectedFailure) {
+        getAppLogger().error(
+          'Sign-in with email and password failed unexpectedly',
+          {
+            error,
+            data: {
+              area: 'auth-repository',
+              operation: 'signInWithEmailPassword',
+            },
+          },
+        );
+      }
+
+      return err(failure);
     }
   }
 
@@ -65,7 +100,22 @@ export class AuthRepositoryImpl implements AuthRepository {
       await this.authSessionStore.saveSession(authenticatedUser.session);
       return ok(UserModel.toEntity(authenticatedUser.user));
     } catch (error) {
-      return err(mapExceptionToFailure(error));
+      const failure = mapExceptionToFailure(error);
+
+      if (failure instanceof UnexpectedFailure) {
+        getAppLogger().error(
+          'Sign-up with email and password failed unexpectedly',
+          {
+            error,
+            data: {
+              area: 'auth-repository',
+              operation: 'signUpWithEmailPassword',
+            },
+          },
+        );
+      }
+
+      return err(failure);
     }
   }
 
@@ -86,12 +136,38 @@ export class AuthRepositoryImpl implements AuthRepository {
       signOutError = error;
     }
 
-    await this.authSessionStore.clearSession();
+    try {
+      await this.authSessionStore.clearSession();
+    } catch (error) {
+      signOutError ??= error;
+    }
 
     if (signOutError !== null) {
-      return err(mapExceptionToFailure(signOutError));
+      const failure = mapExceptionToFailure(signOutError);
+
+      if (failure instanceof UnexpectedFailure) {
+        getAppLogger().error('Sign-out failed unexpectedly', {
+          error: signOutError,
+          data: {
+            area: 'auth-repository',
+            operation: 'signOut',
+          },
+        });
+      }
+
+      return err(failure);
     }
 
     return ok(undefined);
   }
+}
+
+function isNextDynamicServerUsageError(error: unknown): boolean {
+  return (
+    error instanceof Error && error.message.startsWith('Dynamic server usage:')
+  );
+}
+
+function getAppLogger(): PinoAppLogger {
+  return serverContainer.resolve(PinoAppLogger);
 }

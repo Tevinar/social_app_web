@@ -37,6 +37,11 @@ export interface HttpRequestParams {
 }
 
 /**
+ * Dependency-injection token for `HttpClient`.
+ */
+export const HTTP_CLIENT = Symbol('HTTP_CLIENT');
+
+/**
  * Thin project-owned HTTP abstraction used by remote data sources.
  */
 export interface HttpClient {

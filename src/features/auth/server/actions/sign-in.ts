@@ -2,9 +2,10 @@
 
 import 'server-only';
 
-import { serverDependencies } from '@/shell/server/dependencies';
+import * as Sentry from '@sentry/nextjs';
 import { readFormDataString } from '@/features/auth/server/actions/read-form-data-string';
-
+import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
+import { serverContainer } from '@/shell/server/init-dependencies';
 /**
  * Serializable UI state returned by the sign-in Server Action.
  */
@@ -21,21 +22,27 @@ export async function signIn(
   _currentState: SignInActionState,
   formData: FormData,
 ): Promise<SignInActionState> {
-  const result =
-    await serverDependencies.auth.signInWithEmailPasswordUseCase.execute({
-      email: readFormDataString(formData, 'email'),
-      password: readFormDataString(formData, 'password'),
-    });
+  return Sentry.withServerActionInstrumentation(
+    'signIn',
+    async (): Promise<SignInActionState> => {
+      const result = await serverContainer
+        .resolve(SignInWithEmailPasswordUseCase)
+        .execute({
+          email: readFormDataString(formData, 'email'),
+          password: readFormDataString(formData, 'password'),
+        });
 
-  if (result.isErr()) {
-    return {
-      status: 'error',
-      errorMessage: result.error.message,
-    };
-  }
+      if (result.isErr()) {
+        return {
+          status: 'error',
+          errorMessage: result.error.message,
+        };
+      }
 
-  return {
-    status: 'success',
-    errorMessage: null,
-  };
+      return {
+        status: 'success',
+        errorMessage: null,
+      };
+    },
+  );
 }

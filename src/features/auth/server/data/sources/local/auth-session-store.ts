@@ -12,6 +12,11 @@ import { createHash } from 'node:crypto';
 import { Environment } from '@/core/config/environment';
 
 /**
+ * Dependency-injection token for `AuthSessionStore`.
+ */
+export const AUTH_SESSION_STORE = Symbol('AUTH_SESSION_STORE');
+
+/**
  * Local store for the authenticated session cookie.
  */
 export interface AuthSessionStore {
