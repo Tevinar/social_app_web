@@ -4,29 +4,35 @@ import { err, ok } from 'neverthrow';
 import { ValidationFailure } from '@/core/errors/failures';
 import { User } from '@/features/auth/neutral/domain/entities/user';
 import { signUp } from '@/features/auth/server/actions/sign-up';
-import { serverDependencies } from '@/shell/server/init-dependencies';
+import { serverContainer } from '@/shell/server/init-dependencies';
+
+// Mock Sentry instrumentation so the server action callback runs directly in tests.
+jest.mock('@sentry/nextjs', () => ({
+  withServerActionInstrumentation: jest.fn(
+    async (_name: string, callback: () => Promise<unknown>) => callback(),
+  ),
+}));
 
 // Mock the composition root so the action test can control the injected use case directly.
-jest.mock('@/shell/server/dependencies', () => ({
-  serverDependencies: {
-    auth: {
-      signUpWithEmailPasswordUseCase: {
-        execute: jest.fn(),
-      },
-    },
+jest.mock('@/shell/server/init-dependencies', () => ({
+  serverContainer: {
+    resolve: jest.fn(),
   },
 }));
 
 describe('signUp action', () => {
-  const execute = serverDependencies.auth.signUpWithEmailPasswordUseCase
-    .execute as jest.Mock;
+  const mockExecute = jest.fn();
+  const mockResolve = serverContainer.resolve as jest.Mock;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockResolve.mockReturnValue({
+      execute: mockExecute,
+    });
   });
 
   it('given a failing sign-up use case when the action runs then it returns an error state', async () => {
-    execute.mockResolvedValue(
+    mockExecute.mockResolvedValue(
       err(new ValidationFailure('Email already in use.')),
     );
 
@@ -44,7 +50,7 @@ describe('signUp action', () => {
   });
 
   it('given a successful sign-up use case when the action runs then it extracts the form data and returns success', async () => {
-    execute.mockResolvedValue(
+    mockExecute.mockResolvedValue(
       ok(new User('user_1', 'Alice', 'alice@example.com')),
     );
 
@@ -60,7 +66,7 @@ describe('signUp action', () => {
       errorMessage: null,
     });
 
-    expect(execute).toHaveBeenCalledWith({
+    expect(mockExecute).toHaveBeenCalledWith({
       name: 'Alice',
       email: 'alice@example.com',
       password: '123456',
@@ -68,7 +74,7 @@ describe('signUp action', () => {
   });
 
   it('given file entries in the sign-up form when the action runs then it passes empty strings instead of object stringification', async () => {
-    execute.mockResolvedValue(
+    mockExecute.mockResolvedValue(
       ok(new User('user_1', 'Alice', 'alice@example.com')),
     );
 
@@ -88,7 +94,7 @@ describe('signUp action', () => {
 
     await signUp({ status: 'idle', errorMessage: null }, formData);
 
-    expect(execute).toHaveBeenCalledWith({
+    expect(mockExecute).toHaveBeenCalledWith({
       name: '',
       email: '',
       password: '',
