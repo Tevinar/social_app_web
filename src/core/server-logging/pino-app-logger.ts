@@ -52,18 +52,42 @@ export class PinoAppLogger {
         }),
   });
 
+  /**
+   * Writes one debug-level log entry.
+   *
+   * @param message Human-readable log message.
+   * @param data Optional structured log payload.
+   */
   debug(message: string, data?: AppLogData): void {
     this.logger.debug(data ?? {}, message);
   }
 
+  /**
+   * Writes one info-level log entry.
+   *
+   * @param message Human-readable log message.
+   * @param data Optional structured log payload.
+   */
   info(message: string, data?: AppLogData): void {
     this.logger.info(data ?? {}, message);
   }
 
+  /**
+   * Writes one warning-level log entry.
+   *
+   * @param message Human-readable log message.
+   * @param data Optional structured log payload.
+   */
   warning(message: string, data?: AppLogData): void {
     this.logger.warn(data ?? {}, message);
   }
 
+  /**
+   * Writes one error-level log entry and forwards it to Sentry.
+   *
+   * @param message Human-readable log message.
+   * @param params Optional error object and structured log payload.
+   */
   error(message: string, params?: PinoAppLoggerErrorParams): void {
     let normalizedError: Error | undefined;
 

@@ -8,8 +8,7 @@ import type { DeviceIdStore } from '@/features/auth/server/data/sources/local/de
 import type { AuthSessionStore } from '@/features/auth/server/data/sources/local/auth-session-store';
 import type { User } from '@/features/auth/neutral/domain/entities/user';
 import { UserModel } from '@/features/auth/neutral/data/models/user-model';
-import { serverContainer } from '@/shell/server/init-dependencies';
-import { PinoAppLogger } from '@/shell/server/logging/pino-app-logger';
+import type { PinoAppLogger } from '@/core/server-logging/pino-app-logger';
 import type { AuthRemoteDataSource } from '../sources/remote/auth-backend-data-source';
 
 /**
@@ -21,6 +20,7 @@ export class AuthRepositoryImpl implements AuthRepository {
     private readonly authRemoteDataSource: AuthRemoteDataSource,
     private readonly authSessionStore: AuthSessionStore,
     private readonly deviceIdStore: DeviceIdStore,
+    private readonly appLogger: PinoAppLogger,
   ) {}
 
   async getCurrentUserId(): Promise<Result<string | null, Failure>> {
@@ -34,7 +34,7 @@ export class AuthRepositoryImpl implements AuthRepository {
         failure instanceof UnexpectedFailure &&
         !isNextDynamicServerUsageError(error)
       ) {
-        getAppLogger().error(
+        this.appLogger.error(
           'Failed to resolve the current authenticated user id',
           {
             error,
@@ -68,7 +68,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       const failure = mapExceptionToFailure(error);
 
       if (failure instanceof UnexpectedFailure) {
-        getAppLogger().error(
+        this.appLogger.error(
           'Sign-in with email and password failed unexpectedly',
           {
             error,
@@ -103,7 +103,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       const failure = mapExceptionToFailure(error);
 
       if (failure instanceof UnexpectedFailure) {
-        getAppLogger().error(
+        this.appLogger.error(
           'Sign-up with email and password failed unexpectedly',
           {
             error,
@@ -146,7 +146,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       const failure = mapExceptionToFailure(signOutError);
 
       if (failure instanceof UnexpectedFailure) {
-        getAppLogger().error('Sign-out failed unexpectedly', {
+        this.appLogger.error('Sign-out failed unexpectedly', {
           error: signOutError,
           data: {
             area: 'auth-repository',
@@ -166,8 +166,4 @@ function isNextDynamicServerUsageError(error: unknown): boolean {
   return (
     error instanceof Error && error.message.startsWith('Dynamic server usage:')
   );
-}
-
-function getAppLogger(): PinoAppLogger {
-  return serverContainer.resolve(PinoAppLogger);
 }

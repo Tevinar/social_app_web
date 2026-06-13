@@ -31,7 +31,7 @@ import { GetCurrentUserIdUseCase } from '@/features/auth/server/domain/usecases/
 import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
 import { SignUpWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
 import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign-out-current-user.usecase';
-import { PinoAppLogger } from './logging/pino-app-logger';
+import { PinoAppLogger } from '../../core/server-logging/pino-app-logger';
 
 /**
  * Global server-side tsyringe container used as the composition root.
@@ -78,6 +78,7 @@ serverContainer.register(AUTH_REPOSITORY, {
         ),
         dependencyContainer.resolve<AuthSessionStore>(AUTH_SESSION_STORE),
         dependencyContainer.resolve<DeviceIdStore>(DEVICE_ID_STORE),
+        dependencyContainer.resolve(PinoAppLogger),
       ),
   ),
 });
