@@ -5,6 +5,7 @@
 // rule can be enforced locally before a request or remotely by the backend.
 
 export const CommonFailureMessages = {
+  invalidLimit: 'Limit must be greater than zero.',
   invalidRequest: 'The submitted data is invalid. Please review and try again.',
   conflict: 'This request conflicts with existing data. Please try again.',
 } as const;
@@ -16,4 +17,11 @@ export const AuthFailureMessages = {
   emailAlreadyInUse: 'Email already in use.',
   invalidName: 'Please enter a valid name.',
   invalidDeviceId: 'Unable to validate this device. Please try again.',
+} as const;
+
+export const BlogFailureMessages = {
+  imageRequired: 'Image cannot be empty.',
+  titleRequired: 'Title cannot be empty.',
+  contentRequired: 'Content cannot be empty.',
+  topicSelectionRequired: 'At least one topic must be selected.',
 } as const;
