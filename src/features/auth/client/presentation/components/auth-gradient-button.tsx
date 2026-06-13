@@ -1,3 +1,4 @@
+'use client';
 import { Loader } from '@/core/ui/loader';
 
 type AuthGradientButtonProps = {

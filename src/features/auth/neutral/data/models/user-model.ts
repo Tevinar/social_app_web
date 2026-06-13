@@ -1,4 +1,4 @@
-import { JsonReader } from '@/core/serialization/json_reader';
+import { JsonReader } from '@/core/serialization/json-reader';
 import { User } from '@/features/auth/neutral/domain/entities/user';
 
 /**

@@ -13,7 +13,7 @@ import {
 import {
   signUp,
   type SignUpActionState,
-} from '@/features/auth/server/actions/sign_up';
+} from '@/features/auth/server/actions/sign-up';
 import { routes } from '@/shell/neutral/routes';
 
 const initialSignUpActionState: SignUpActionState = {

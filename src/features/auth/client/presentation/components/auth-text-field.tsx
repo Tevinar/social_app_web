@@ -1,3 +1,5 @@
+'use client';
+
 type AuthTextFieldProps = {
   readonly label: string;
   readonly name: string;

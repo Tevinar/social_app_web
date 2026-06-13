@@ -5,7 +5,7 @@ import { Suspense } from 'react';
 export default function SignUpPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-secondary-background">
-      {/* Suspense is mandatory because SignUpForm contains useSearchParams, which 
+      {/* Suspense is mandatory because SignUpForm contains useSearchParams, 
             which can trigger a client-side rendering bailout during static prerendering 
             and therefore must be isolated behind a Suspense boundary.*/}
       <Suspense fallback={<Loader />}>

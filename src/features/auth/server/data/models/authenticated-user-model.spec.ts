@@ -1,6 +1,6 @@
 /** @jest-environment node */
 
-import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated_user_model';
+import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated-user-model';
 
 describe('AuthenticatedUserModel', () => {
   it('given a valid authenticated-user payload when parsing from JSON then it reuses the parsed user id for the session', () => {

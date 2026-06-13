@@ -28,7 +28,7 @@ jest.mock('next/navigation', () => ({
 }));
 
 // Mock the server action module so the component can import it without pulling the real server dependency graph.
-jest.mock('@/features/auth/server/actions/sign_up', () => ({
+jest.mock('@/features/auth/server/actions/sign-up', () => ({
   signUp: jest.fn(),
 }));
 

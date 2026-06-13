@@ -5,14 +5,10 @@
  * A failure is the user-safe representation of an error condition after
  * low-level exceptions have been mapped into something the rest of the app can
  * reason about. Use `message` for UI copy that can be shown directly to the
- * user. Use `debugMessage` for optional diagnostic context that may help with
- * logging or troubleshooting.
+ * user.
  */
 export abstract class Failure {
-  protected constructor(
-    readonly message: string,
-    readonly debugMessage?: string,
-  ) {}
+  protected constructor(readonly message: string) {}
 }
 
 /**
@@ -24,11 +20,8 @@ export abstract class Failure {
  * responses that contain an application error payload.
  */
 export class NetworkFailure extends Failure {
-  constructor(debugMessage?: string) {
-    super(
-      'Unable to reach the server. Check your connection and try again.',
-      debugMessage,
-    );
+  constructor() {
+    super('Unable to reach the server. Check your connection and try again.');
   }
 }
 
@@ -40,8 +33,8 @@ export class NetworkFailure extends Failure {
  * action.
  */
 export class UnauthorizedFailure extends Failure {
-  constructor(debugMessage?: string) {
-    super('Your session has expired. Please sign in again.', debugMessage);
+  constructor() {
+    super('Your session has expired. Please sign in again.');
   }
 }
 
@@ -50,8 +43,8 @@ export class UnauthorizedFailure extends Failure {
  * to perform the requested action.
  */
 export class ForbiddenFailure extends Failure {
-  constructor(debugMessage?: string) {
-    super('You do not have permission to perform this action.', debugMessage);
+  constructor() {
+    super('You do not have permission to perform this action.');
   }
 }
 
@@ -63,8 +56,8 @@ export class ForbiddenFailure extends Failure {
  * not generic authorization failures.
  */
 export class AuthenticationFailure extends Failure {
-  constructor(message: string, debugMessage?: string) {
-    super(message, debugMessage);
+  constructor(message: string) {
+    super(message);
   }
 }
 
@@ -76,8 +69,8 @@ export class AuthenticationFailure extends Failure {
  * invalid input.
  */
 export class ValidationFailure extends Failure {
-  constructor(message: string, debugMessage?: string) {
-    super(message, debugMessage);
+  constructor(message: string) {
+    super(message);
   }
 }
 
@@ -86,8 +79,8 @@ export class ValidationFailure extends Failure {
  * accessible by identifier.
  */
 export class NotFoundFailure extends Failure {
-  constructor(debugMessage?: string) {
-    super('Requested resource not found.', debugMessage);
+  constructor() {
+    super('Requested resource not found.');
   }
 }
 
@@ -100,7 +93,7 @@ export class NotFoundFailure extends Failure {
  * the user.
  */
 export class UnexpectedFailure extends Failure {
-  constructor(debugMessage?: string) {
-    super('Something went wrong. Please try again.', debugMessage);
+  constructor() {
+    super('Something went wrong. Please try again.');
   }
 }

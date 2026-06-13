@@ -5,6 +5,11 @@ import type { User } from '@/features/auth/neutral/domain/entities/user';
 import type { Result } from 'neverthrow';
 
 /**
+ * Dependency-injection token for `AuthRepository`.
+ */
+export const AUTH_REPOSITORY = Symbol('AUTH_REPOSITORY');
+
+/**
  * Coordinates backend auth requests with
  * local session and device persistence.
  */

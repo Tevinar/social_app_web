@@ -7,6 +7,11 @@ import { cookies } from 'next/headers';
 import { randomUUID } from 'node:crypto';
 
 /**
+ * Dependency-injection token for `DeviceIdStore`.
+ */
+export const DEVICE_ID_STORE = Symbol('DEVICE_ID_STORE');
+
+/**
  * Local store for the stable device identifier required by the auth API.
  */
 export interface DeviceIdStore {

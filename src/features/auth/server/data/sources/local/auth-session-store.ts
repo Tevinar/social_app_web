@@ -1,15 +1,20 @@
 import 'server-only';
 
 import { EnvVariable } from '@/core/config/env-variable';
-import { requireSecretFile } from '@/core/config/require_secret_file';
+import { requireSecretFile } from '@/core/config/read-secret-file';
 import { InvalidResponseException } from '@/core/errors/exceptions';
-import { JsonReader } from '@/core/serialization/json_reader';
+import { JsonReader } from '@/core/serialization/json-reader';
 import { authCookies } from '@/features/auth/neutral/constants/auth-cookies';
-import { AuthSessionModel } from '@/features/auth/server/data/models/auth_session_model';
+import { AuthSessionModel } from '@/features/auth/server/data/models/auth-session-model';
 import { EncryptJWT, jwtDecrypt } from 'jose';
 import { cookies } from 'next/headers';
 import { createHash } from 'node:crypto';
 import { Environment } from '@/core/config/environment';
+
+/**
+ * Dependency-injection token for `AuthSessionStore`.
+ */
+export const AUTH_SESSION_STORE = Symbol('AUTH_SESSION_STORE');
 
 /**
  * Local store for the authenticated session cookie.

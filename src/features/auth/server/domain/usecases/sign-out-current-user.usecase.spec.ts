@@ -2,7 +2,7 @@
 
 import { ok } from 'neverthrow';
 import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';
-import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign_out_current_user.usecase';
+import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign-out-current-user.usecase';
 
 describe('SignOutCurrentUserUseCase', () => {
   it('given the sign-out use case when executed then it delegates to the auth repository', async () => {

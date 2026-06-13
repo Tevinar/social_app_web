@@ -1,6 +1,6 @@
 import 'server-only';
 
-import { JsonReader } from '@/core/serialization/json_reader';
+import { JsonReader } from '@/core/serialization/json-reader';
 
 /**
  * Data model representing a locally persisted authenticated token session.

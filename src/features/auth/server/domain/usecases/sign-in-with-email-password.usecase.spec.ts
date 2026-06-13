@@ -2,7 +2,7 @@
 
 import { err, ok } from 'neverthrow';
 import { ValidationFailure } from '@/core/errors/failures';
-import { AuthFailureMessages } from '@/core/errors/failure_messages';
+import { AuthFailureMessages } from '@/core/errors/failure-messages';
 import { User } from '@/features/auth/neutral/domain/entities/user';
 import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
 import type { AuthRepository } from '@/features/auth/server/domain/repositories/auth-repository';

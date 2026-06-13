@@ -1,10 +1,10 @@
 import {
   guardRemoteDataSourceCall,
   parseServerExceptionFromResponse,
-} from '@/core/errors/exceptions_mapper';
+} from '@/core/errors/exceptions-mapper';
 import { EnvVariable } from '@/core/config/env-variable';
 import { InvalidResponseException } from '@/core/errors/exceptions';
-import { JsonReader } from '@/core/serialization/json_reader';
+import { JsonReader } from '@/core/serialization/json-reader';
 
 /**
  * Supported HTTP methods for the project-owned HTTP client.
@@ -35,6 +35,11 @@ export interface HttpRequestParams {
    */
   headers?: HeadersInit;
 }
+
+/**
+ * Dependency-injection token for `HttpClient`.
+ */
+export const HTTP_CLIENT = Symbol('HTTP_CLIENT');
 
 /**
  * Thin project-owned HTTP abstraction used by remote data sources.
