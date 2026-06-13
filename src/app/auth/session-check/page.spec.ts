@@ -59,7 +59,7 @@ describe('SessionCheckPage', () => {
 
   it('given a sign-in auth attempt and no persisted session when the page runs then it redirects back to sign-in with the session-required error', async () => {
     (getCurrentUserId as jest.Mock).mockResolvedValue(
-      err(new UnexpectedFailure('no session')),
+      err(new UnexpectedFailure()),
     );
 
     await expect(
