@@ -17,7 +17,7 @@ jest.mock('next/headers', () => ({
 }));
 
 // Mock secret-file loading so encryption tests can run without touching the real filesystem.
-jest.mock('@/core/config/require_secret_file', () => ({
+jest.mock('@/core/config/read-secret-file', () => ({
   requireSecretFile: jest.fn(),
 }));
 
