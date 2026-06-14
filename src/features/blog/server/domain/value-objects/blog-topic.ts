@@ -2,23 +2,29 @@
  * Supported blog topics.
  */
 export enum BlogTopic {
-  technology = 'Technology',
-  business = 'Business',
-  programming = 'Programming',
-  entertainment = 'Entertainment',
+  technology = 'technology',
+  business = 'business',
+  programming = 'programming',
+  entertainment = 'entertainment',
 }
 
 /**
- * Creates one `BlogTopic` from its serialized enum-name value.
+ * Human-readable labels associated with each backend-facing blog topic value.
  */
-export function blogTopicFromValue(name: string): BlogTopic {
-  const topic = (Object.keys(BlogTopic) as Array<keyof typeof BlogTopic>).find(
-    (currentTopic) => currentTopic === name,
-  );
+export const blogTopicLabels: Record<BlogTopic, string> = {
+  [BlogTopic.technology]: 'Technology',
+  [BlogTopic.business]: 'Business',
+  [BlogTopic.programming]: 'Programming',
+  [BlogTopic.entertainment]: 'Entertainment',
+};
 
-  if (topic === undefined) {
+/**
+ * Creates one `BlogTopic` from its serialized backend value.
+ */
+export function fromValue(name: string): BlogTopic {
+  if (!(Object.values(BlogTopic) as ReadonlyArray<string>).includes(name)) {
     throw new Error(`Unknown blog topic: ${name}`);
   }
 
-  return BlogTopic[topic];
+  return name as BlogTopic;
 }

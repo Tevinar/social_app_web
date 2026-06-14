@@ -36,13 +36,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       ) {
         this.appLogger.error(
           'Failed to resolve the current authenticated user id',
-          {
-            error,
-            data: {
-              area: 'auth-repository',
-              operation: 'getCurrentUserId',
-            },
-          },
+          error,
         );
       }
 
@@ -70,13 +64,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       if (failure instanceof UnexpectedFailure) {
         this.appLogger.error(
           'Sign-in with email and password failed unexpectedly',
-          {
-            error,
-            data: {
-              area: 'auth-repository',
-              operation: 'signInWithEmailPassword',
-            },
-          },
+          error,
         );
       }
 
@@ -105,13 +93,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       if (failure instanceof UnexpectedFailure) {
         this.appLogger.error(
           'Sign-up with email and password failed unexpectedly',
-          {
-            error,
-            data: {
-              area: 'auth-repository',
-              operation: 'signUpWithEmailPassword',
-            },
-          },
+          error,
         );
       }
 
@@ -146,13 +128,7 @@ export class AuthRepositoryImpl implements AuthRepository {
       const failure = mapExceptionToFailure(signOutError);
 
       if (failure instanceof UnexpectedFailure) {
-        this.appLogger.error('Sign-out failed unexpectedly', {
-          error: signOutError,
-          data: {
-            area: 'auth-repository',
-            operation: 'signOut',
-          },
-        });
+        this.appLogger.error('Sign-out failed unexpectedly', signOutError);
       }
 
       return err(failure);

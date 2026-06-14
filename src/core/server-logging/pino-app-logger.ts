@@ -6,13 +6,6 @@ import { Environment } from '@/core/config/environment';
 import { EnvVariable } from '@/core/config/env-variable';
 import { LogLevel } from '@/core/config/log-level';
 
-export type AppLogData = Record<string, unknown>;
-
-export type PinoAppLoggerErrorParams = {
-  data?: AppLogData;
-  error?: unknown;
-};
-
 /**
  * Pino-backed server logger that also forwards error-level events to Sentry.
  */
@@ -58,7 +51,7 @@ export class PinoAppLogger {
    * @param message Human-readable log message.
    * @param data Optional structured log payload.
    */
-  debug(message: string, data?: AppLogData): void {
+  debug(message: string, data?: Record<string, unknown>): void {
     this.logger.debug(data ?? {}, message);
   }
 
@@ -68,7 +61,7 @@ export class PinoAppLogger {
    * @param message Human-readable log message.
    * @param data Optional structured log payload.
    */
-  info(message: string, data?: AppLogData): void {
+  info(message: string, data?: Record<string, unknown>): void {
     this.logger.info(data ?? {}, message);
   }
 
@@ -78,7 +71,7 @@ export class PinoAppLogger {
    * @param message Human-readable log message.
    * @param data Optional structured log payload.
    */
-  warning(message: string, data?: AppLogData): void {
+  warning(message: string, data?: Record<string, unknown>): void {
     this.logger.warn(data ?? {}, message);
   }
 
@@ -86,43 +79,27 @@ export class PinoAppLogger {
    * Writes one error-level log entry and forwards it to Sentry.
    *
    * @param message Human-readable log message.
-   * @param params Optional error object and structured log payload.
+   * @param error Optional thrown value associated with the log entry.
    */
-  error(message: string, params?: PinoAppLoggerErrorParams): void {
+  error(message: string, error?: unknown): void {
     let normalizedError: Error | undefined;
 
-    if (params?.error instanceof Error) {
-      normalizedError = params.error;
-    } else if (params?.error !== undefined) {
-      normalizedError = new Error(String(params.error));
+    if (error instanceof Error) {
+      normalizedError = error;
+    } else if (error !== undefined) {
+      normalizedError = new Error(String(error));
     }
 
-    this.logger.error(
-      {
-        ...(normalizedError ? { err: normalizedError } : {}),
-        ...(params?.data ?? {}),
-      },
-      message,
-    );
+    this.logger.error(normalizedError ? { err: normalizedError } : {}, message);
 
     if (normalizedError) {
-      const captureContext: { extra?: AppLogData } = {};
-
-      if (params?.data !== undefined) {
-        captureContext.extra = params.data;
-      }
-
-      Sentry.captureException(normalizedError, captureContext);
+      Sentry.captureException(normalizedError);
       return;
     }
 
-    const captureContext: { level: 'error'; extra?: AppLogData } = {
+    const captureContext: Sentry.CaptureContext = {
       level: 'error',
     };
-
-    if (params?.data !== undefined) {
-      captureContext.extra = params.data;
-    }
 
     Sentry.captureMessage(message, captureContext);
   }

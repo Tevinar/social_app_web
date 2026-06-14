@@ -31,6 +31,32 @@ export class JsonReader {
   }
 
   /**
+   * Reads an optional string field from `json`.
+   *
+   * Returns `null` when `field` is missing or explicitly `null`. Throws
+   * `InvalidResponseException` when a present value is not a string.
+   */
+  static readNullableString(
+    json: Record<string, unknown>,
+    field: string,
+    source = 'JSON payload',
+  ): string | null {
+    const value = json[field];
+
+    if (value === undefined || value === null) {
+      return null;
+    }
+
+    if (typeof value === 'string') {
+      return value;
+    }
+
+    throw new InvalidResponseException({
+      message: `${source} has invalid "${field}" field`,
+    });
+  }
+
+  /**
    * Reads a required object field from `json`.
    *
    * Throws `InvalidResponseException` when `field` is missing or is not a JSON
@@ -110,5 +136,49 @@ export class JsonReader {
     }
 
     return date;
+  }
+
+  /**
+   * Reads a required array field from `json`.
+   *
+   * Throws `InvalidResponseException` when `field` is missing or is not an
+   * array.
+   */
+  static readList(
+    json: Record<string, unknown>,
+    field: string,
+    source = 'JSON payload',
+  ): unknown[] {
+    const value = json[field];
+
+    if (Array.isArray(value)) {
+      return value;
+    }
+
+    throw new InvalidResponseException({
+      message: `${source} has invalid "${field}" field`,
+    });
+  }
+
+  /**
+   * Reads a required list of strings from `json`.
+   *
+   * Throws `InvalidResponseException` when `field` is missing, is not an
+   * array, or contains non-string values.
+   */
+  static readStringList(
+    json: Record<string, unknown>,
+    field: string,
+    source = 'JSON payload',
+  ): string[] {
+    return JsonReader.readList(json, field, source).map((item) => {
+      if (typeof item === 'string') {
+        return item;
+      }
+
+      throw new InvalidResponseException({
+        message: `${source} has invalid "${field}" field`,
+      });
+    });
   }
 }

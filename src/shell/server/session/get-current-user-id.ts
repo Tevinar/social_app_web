@@ -1,7 +1,7 @@
 import 'server-only';
 
 import { GetCurrentUserIdUseCase } from '@/features/auth/server/domain/usecases/get-current-user-id.usecase';
-import { serverContainer } from '@/shell/server/init-dependencies';
+import { serverContainer } from '@/shell/server/dependencies/init-dependencies';
 
 /**
  * Returns the current authenticated user identifier stored in the encrypted

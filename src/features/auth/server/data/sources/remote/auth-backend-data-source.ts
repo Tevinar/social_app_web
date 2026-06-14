@@ -1,6 +1,7 @@
 import 'server-only';
 
-import type { HttpClient } from '@/core/http/http-client';
+import type { AxiosInstance } from 'axios';
+import { JsonReader } from '@/core/serialization/json-reader';
 import { AuthenticatedUserModel } from '@/features/auth/server/data/models/authenticated-user-model';
 
 /**
@@ -41,7 +42,7 @@ export interface AuthRemoteDataSource {
  * Backend-facing implementation of `AuthRemoteDataSource`.
  */
 export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(private readonly axiosInstance: AxiosInstance) {}
 
   async signUpWithEmailPassword(params: {
     name: string;
@@ -49,16 +50,17 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     password: string;
     deviceId: string;
   }): Promise<AuthenticatedUserModel> {
-    const body = await this.httpClient.requestJson({
-      path: '/auth/sign-up',
-      method: 'POST',
-      json: {
-        name: params.name,
-        email: params.email,
-        password: params.password,
-        deviceId: params.deviceId,
-      },
+    const response = await this.axiosInstance.post('/auth/sign-up', {
+      name: params.name,
+      email: params.email,
+      password: params.password,
+      deviceId: params.deviceId,
     });
+    const body = JsonReader.asObject(
+      response.data,
+      'response',
+      'Response payload',
+    );
 
     return AuthenticatedUserModel.fromJson(body);
   }
@@ -68,15 +70,16 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     password: string;
     deviceId: string;
   }): Promise<AuthenticatedUserModel> {
-    const body = await this.httpClient.requestJson({
-      path: '/auth/sign-in',
-      method: 'POST',
-      json: {
-        email: params.email,
-        password: params.password,
-        deviceId: params.deviceId,
-      },
+    const response = await this.axiosInstance.post('/auth/sign-in', {
+      email: params.email,
+      password: params.password,
+      deviceId: params.deviceId,
     });
+    const body = JsonReader.asObject(
+      response.data,
+      'response',
+      'Response payload',
+    );
 
     return AuthenticatedUserModel.fromJson(body);
   }
@@ -85,13 +88,9 @@ export class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     refreshToken: string;
     deviceId: string;
   }): Promise<void> {
-    await this.httpClient.requestVoid({
-      path: '/auth/sign-out',
-      method: 'POST',
-      json: {
-        refreshToken: params.refreshToken,
-        deviceId: params.deviceId,
-      },
+    await this.axiosInstance.post('/auth/sign-out', {
+      refreshToken: params.refreshToken,
+      deviceId: params.deviceId,
     });
   }
 }

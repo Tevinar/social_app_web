@@ -4,7 +4,7 @@ import { err, ok } from 'neverthrow';
 import { ValidationFailure } from '@/core/errors/failures';
 import { signIn } from '@/features/auth/server/actions/sign-in';
 import { User } from '@/features/auth/neutral/domain/entities/user';
-import { serverContainer } from '@/shell/server/init-dependencies';
+import { serverContainer } from '@/shell/server/dependencies/init-dependencies';
 
 // Mock Sentry instrumentation so the server action callback runs directly in tests.
 jest.mock('@sentry/nextjs', () => ({

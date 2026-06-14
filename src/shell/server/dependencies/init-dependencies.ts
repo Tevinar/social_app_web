@@ -1,12 +1,19 @@
 import 'server-only';
-import 'reflect-metadata';
 
+import type { AxiosInstance } from 'axios';
 import { container, instanceCachingFactory } from 'tsyringe';
+import { BlogRepositoryImpl } from '@/features/blog/server/data/repositories/blog-repository-impl';
 import {
-  FetchHttpClient,
-  HTTP_CLIENT,
-  type HttpClient,
-} from '@/core/http/http-client';
+  BLOG_REMOTE_DATA_SOURCE,
+  BlogRemoteDataSourceImpl,
+  type BlogRemoteDataSource,
+} from '@/features/blog/server/data/sources/blog-remote-data-source';
+import {
+  BLOG_REPOSITORY,
+  type BlogRepository,
+} from '@/features/blog/server/domain/repositories/blog-repository';
+import { CreateBlogUseCase } from '@/features/blog/server/domain/usecases/create-blog.usecase';
+import { GetBlogListSliceUseCase } from '@/features/blog/server/domain/usecases/get-blog-list-slice.usecase';
 import { AuthRepositoryImpl } from '@/features/auth/server/data/repositories/auth-repository-impl';
 import {
   CookieDeviceIdStore,
@@ -31,7 +38,8 @@ import { GetCurrentUserIdUseCase } from '@/features/auth/server/domain/usecases/
 import { SignInWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-in-with-email-password.usecase';
 import { SignUpWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
 import { SignOutCurrentUserUseCase } from '@/features/auth/server/domain/usecases/sign-out-current-user.usecase';
-import { PinoAppLogger } from '../../core/server-logging/pino-app-logger';
+import { PinoAppLogger } from '../../../core/server-logging/pino-app-logger';
+import { createServerAxios, SERVER_AXIOS } from './create-server-axios';
 
 /**
  * Global server-side tsyringe container used as the composition root.
@@ -42,8 +50,8 @@ serverContainer.register(PinoAppLogger, {
   useFactory: instanceCachingFactory(() => new PinoAppLogger()),
 });
 
-serverContainer.register(HTTP_CLIENT, {
-  useFactory: instanceCachingFactory(() => new FetchHttpClient()),
+serverContainer.register(SERVER_AXIOS, {
+  useFactory: instanceCachingFactory(() => createServerAxios()),
 });
 
 /*
@@ -52,9 +60,9 @@ serverContainer.register(HTTP_CLIENT, {
 
 serverContainer.register(AUTH_REMOTE_DATA_SOURCE, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new AuthRemoteDataSourceImpl(
-        dependencyContainer.resolve<HttpClient>(HTTP_CLIENT),
+        container.resolve<AxiosInstance>(SERVER_AXIOS),
       ),
   ),
 });
@@ -71,50 +79,87 @@ serverContainer.register(DEVICE_ID_STORE, {
 
 serverContainer.register(AUTH_REPOSITORY, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new AuthRepositoryImpl(
-        dependencyContainer.resolve<AuthRemoteDataSource>(
-          AUTH_REMOTE_DATA_SOURCE,
-        ),
-        dependencyContainer.resolve<AuthSessionStore>(AUTH_SESSION_STORE),
-        dependencyContainer.resolve<DeviceIdStore>(DEVICE_ID_STORE),
-        dependencyContainer.resolve(PinoAppLogger),
+        container.resolve<AuthRemoteDataSource>(AUTH_REMOTE_DATA_SOURCE),
+        container.resolve<AuthSessionStore>(AUTH_SESSION_STORE),
+        container.resolve<DeviceIdStore>(DEVICE_ID_STORE),
+        container.resolve(PinoAppLogger),
       ),
   ),
 });
 
 serverContainer.register(SignInWithEmailPasswordUseCase, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new SignInWithEmailPasswordUseCase(
-        dependencyContainer.resolve<AuthRepository>(AUTH_REPOSITORY),
+        container.resolve<AuthRepository>(AUTH_REPOSITORY),
       ),
   ),
 });
 
 serverContainer.register(SignUpWithEmailPasswordUseCase, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new SignUpWithEmailPasswordUseCase(
-        dependencyContainer.resolve<AuthRepository>(AUTH_REPOSITORY),
+        container.resolve<AuthRepository>(AUTH_REPOSITORY),
       ),
   ),
 });
 
 serverContainer.register(GetCurrentUserIdUseCase, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new GetCurrentUserIdUseCase(
-        dependencyContainer.resolve<AuthRepository>(AUTH_REPOSITORY),
+        container.resolve<AuthRepository>(AUTH_REPOSITORY),
       ),
   ),
 });
 
 serverContainer.register(SignOutCurrentUserUseCase, {
   useFactory: instanceCachingFactory(
-    (dependencyContainer) =>
+    (container) =>
       new SignOutCurrentUserUseCase(
-        dependencyContainer.resolve<AuthRepository>(AUTH_REPOSITORY),
+        container.resolve<AuthRepository>(AUTH_REPOSITORY),
+      ),
+  ),
+});
+
+/*
+ * Init blog feature
+ */
+
+serverContainer.register(BLOG_REMOTE_DATA_SOURCE, {
+  useFactory: instanceCachingFactory(
+    (container) =>
+      new BlogRemoteDataSourceImpl(
+        container.resolve<AxiosInstance>(SERVER_AXIOS),
+      ),
+  ),
+});
+
+serverContainer.register(BLOG_REPOSITORY, {
+  useFactory: instanceCachingFactory(
+    (container) =>
+      new BlogRepositoryImpl(
+        container.resolve<BlogRemoteDataSource>(BLOG_REMOTE_DATA_SOURCE),
+        container.resolve(PinoAppLogger),
+      ),
+  ),
+});
+
+serverContainer.register(CreateBlogUseCase, {
+  useFactory: instanceCachingFactory(
+    (container) =>
+      new CreateBlogUseCase(container.resolve<BlogRepository>(BLOG_REPOSITORY)),
+  ),
+});
+
+serverContainer.register(GetBlogListSliceUseCase, {
+  useFactory: instanceCachingFactory(
+    (container) =>
+      new GetBlogListSliceUseCase(
+        container.resolve<BlogRepository>(BLOG_REPOSITORY),
       ),
   ),
 });

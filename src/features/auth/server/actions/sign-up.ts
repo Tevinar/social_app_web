@@ -5,7 +5,7 @@ import 'server-only';
 import * as Sentry from '@sentry/nextjs';
 import { readFormDataString } from '@/features/auth/server/actions/read-form-data-string';
 import { SignUpWithEmailPasswordUseCase } from '@/features/auth/server/domain/usecases/sign-up-with-email-password.usecase';
-import { serverContainer } from '@/shell/server/init-dependencies';
+import { serverContainer } from '@/shell/server/dependencies/init-dependencies';
 
 /**
  * Serializable UI state returned by the sign-up Server Action.
